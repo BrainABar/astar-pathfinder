@@ -12,11 +12,11 @@ function Node(x, y, weight){
   this.blocked = false;
   this.xyStr = x + ',' + y; // reference name 'x,y'
 
-  this.drawRect = function (fillColor, strokeColor) {
+  this.drawRect = function (fillColor, strokeColor, width, height) {
       strokeColor = strokeColor || fillColor; // fill color used stroke is null
       stroke(strokeColor);
       fill(fillColor);
-      rect(this.x* boxwidth, this.y * boxheight, boxwidth, boxheight);
+      rect(this.x* width, this.y * height, width, height);
   };
 
   // returns the color of the object based on weight/cost

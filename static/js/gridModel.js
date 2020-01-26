@@ -20,4 +20,12 @@ function Grid(width, height, amount){
     this.insertnode = function (x, y, nodeObject) { // assign a node object to a position on the grid
         this.gridarray[x][y] = nodeObject;
     };
+
+    this.resize = function(width, height, amount){ // adjusts the width and height and recalculates the nodes
+        this.width = width;
+        this.height = height;
+        this.size = amount;
+        this.nodeWidth = width/this.size;
+        this.nodeHeight = height/this.size;
+    }
 }
