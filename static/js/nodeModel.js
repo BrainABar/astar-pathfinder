@@ -1,20 +1,25 @@
-// node
+// node function/object
 function Node(x, y, weight){
-  this.x = x;
+  this.x = x; // x and y position marks position on grid
   this.y = y;
   this.f = 0;
   this.g = 0;
   this.h = 0;
+  this.nodeColor = color(0); //default color of black
   this.weight = weight; // weight/cost of node
   this.parentNode = null;
   this.relatives = [];
   this.blocked = false;
   this.xyStr = x + ',' + y; // reference name 'x,y'
 
-  this.drawRect = function (fillCol, strokeCol) {
-      tempCol = strokeCol || fillCol; // if strokeCol is left unused, defaults to fill color
-      stroke(tempCol);
-      fill(fillCol);
+  this.drawRect = function (fillColor, strokeColor, nodeFill=false) {
+      stroke(strokeColor || fillColor); // strokeColor, default to fillColor if ommited
+      if(nodeFill){
+        fill(fillColor);
+      }
+      else{
+
+      }
       rect(this.x* boxwidth, this.y * boxheight, boxwidth, boxheight);
   };
 

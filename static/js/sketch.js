@@ -1,4 +1,6 @@
 // functions to modify selection
+var board = null; // will hold the grid, initialized in setup
+
 function changeToStart(){
     currentSelection = "start";
 }
@@ -213,9 +215,11 @@ function setup() {
     cheight = 400; //floor(windowHeight*.8);
     boxheight = cheight/gridsize;
     boxwidth = cwidth/gridsize;
+    board = new Grid(400, 400, 20);
+    console.log(board);
 
     // draw canvas
-    canvasT = createCanvas(cwidth,cheight);
+    canvasT = createCanvas(board.width,board.height);
     canvasT.parent(canvasID);
 
     // create default 2d array of x by x size
