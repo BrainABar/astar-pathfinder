@@ -38,21 +38,21 @@ function Node(x, y, weight){
       }
   };
 
-  this.generateRelatives = function(grid, start){
-      var x = this.x;
-      var y = this.y;
+  this.generateRelatives = function(grid, length){
+      let x = this.x;
+      let y = this.y;
 
       // grid goes from top left to bottom right
-      if(x < gridsize-1) { // right
+      if(x < length-1) { // right
           this.relatives.push(grid[x + 1][y]);
       }
-      if(x > gridsize -1  && y > 0){ //bottom-right
+      if(x > length -1  && y > 0){ //bottom-right
           this.relatives.push(grid[x + 1][y + 1]);
       }
-      if(y < gridsize-1) { // down
+      if(y < length-1) { // down
           this.relatives.push(grid[x][y + 1]);
       }
-      if(x > 0 && y < gridsize -1){ // bottom-left
+      if(x > 0 && y < length-1){ // bottom-left
           this.relatives.push(grid[x - 1][y + 1]);
       }
       if(x > 0){ // left
@@ -64,7 +64,7 @@ function Node(x, y, weight){
       if(y > 0){ // up
           this.relatives.push(grid[x][y - 1]);
       }
-      if(x < gridsize-1 && y < gridsize-1){ // top-right
+      if(x < length-1 && y < length-1){ // top-right
           this.relatives.push(grid[x + 1][y + 1]);
       }
   };

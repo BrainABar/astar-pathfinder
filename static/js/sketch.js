@@ -62,7 +62,7 @@ function resetBoard(){
             tempNode.blocked = false; // reset blocked status
             tempNode.parentNode = null; // remove parents
             tempNode.relatives = []; // remove relatives
-            tempNode.drawRect(tempNode.nodeWeightColor()); // draws color of blocked node, otherwise based on weight
+            tempNode.drawRect(tempNode.nodeWeightColor(), color(0), board.nodeWidth, board.nodeHeight); // draws color of blocked node, otherwise based on weight
         }
     }
     loop();
@@ -73,7 +73,7 @@ function generateDirt() {
         for(let y=0;y<board.size;y++){
             let tempNode = board.gridarray[x][y];
             tempNode.weight = 2;
-            tempNode.drawRect(tempNode.nodeWeightColor());
+            tempNode.drawRect(tempNode.nodeWeightColor(), color(0), board.nodeWidth, board.nodeHeight);
         }
     }
     generation = true;
@@ -85,7 +85,7 @@ function generateBlocked(){
             let tempNode = board.gridarray[x][y];
             if(random(1) < 0.05) {
                 tempNode.blocked = true;
-                tempNode.drawRect(tempNode.nodeWeightColor());
+                tempNode.drawRect(tempNode.nodeWeightColor(), color(0), board.nodeWidth, board.nodeHeight);
             }
         }
     }
@@ -97,22 +97,18 @@ var currentSelection = null;
 var generation = null;
 
 // declarations
-var gridsize = 30; // default 10 by 10 nodes (100 nodes)
-var boxwidth = null; // width of the node representation
-var boxheight = null; // height of the node representation
 var blockedDict = {}; // record of blocked node locations dict['x' + ',' + 'y'] = [x: int(x), y: int(y)];
 var opensetDict = {}; // record of openset nodes locations
 var opensetSize = 0; // record of amount of items in opensetDict
 var closedsetDict = {}; // record of closedset nodes locations
 var openset = [];
-var grid = []; // holding all node objects within canvas
 var goal = null; // whether end node was reached
 var path = []; // path taken from start to end, array of nodes
 var start = null; // user selected starting node
 var end = null; // user selected ending node
 var bounceColors = 0; // will bounce back and forth between frames
 var colorDir = 1;
-var canvasT;
+var canvasT; // holds the canvas and attached to an html div id
 
 // removes wanted node from the list
 function removeNode(removeNode, fromArray) {
@@ -152,7 +148,7 @@ function mousePressed(){
         switch (currentSelection) {
             case "start":
                 if (start !== null) { //remove previous start node from set
-                    start.drawRect(start.nodeWeightColor(), 0, board.nodeWidth, board.nodeHeight);
+                    start.drawRect(start.nodeWeightColor(), color(0), board.nodeWidth, board.nodeHeight);
                 }
                 start = loneNode;
                 start.blocked = false;
@@ -162,35 +158,35 @@ function mousePressed(){
 
             case "end":
                 if (end !== null) {
-                    end.drawRect(end.nodeWeightColor());
+                    end.drawRect(end.nodeWeightColor(), color(0), board.nodeWidth, board.nodeHeight);
                 }
                 end = loneNode;
                 end.blocked = false;
-                end.drawRect(color(255, 18, 55), end.nodeWeightColor()); // red color rect
+                end.drawRect(color(255, 18, 55), end.nodeWeightColor(),board.nodeWidth, board.nodeHeight); // red color rect
                 break;
 
             case "obstacle":
                 loneNode.blocked = true;
-                loneNode.drawRect(loneNode.nodeWeightColor());
+                loneNode.drawRect(loneNode.nodeWeightColor(), loneNode.nodeWeightColor(), board.nodeWidth, board.nodeHeight);
                 blockedDict[loneNode.xyStr] = {x: loneNode.x, y: loneNode.y};
                 break;
 
             case "low":
                 loneNode.weight = 0;
                 loneNode.blocked = false;
-                loneNode.drawRect(loneNode.nodeWeightColor());
+                loneNode.drawRect(loneNode.nodeWeightColor(), loneNode.nodeWeightColor(), board.nodeWidth, board.nodeHeight);
                 break;
 
             case "mid":
                 loneNode.weight = 1;
                 loneNode.blocked = false;
-                loneNode.drawRect(loneNode.nodeWeightColor());
+                loneNode.drawRect(loneNode.nodeWeightColor(), loneNode.nodeWeightColor(), board.nodeWidth, board.nodeHeight);
                 break;
 
             case "high":
                 loneNode.weight = 2;
                 loneNode.blocked = false;
-                loneNode.drawRect(loneNode.nodeWeightColor());
+                loneNode.drawRect(loneNode.nodeWeightColor(), loneNode.nodeWeightColor(), board.nodeWidth, board.nodeHeight);
                 break;
         }
     }
@@ -206,7 +202,7 @@ function setup() {
     board = new Grid(400, 400, 20);
     board.creategrid();
 
-    // draw canvas
+    // draw canvas and attach to div
     canvasT = createCanvas(board.width, board.height);
     canvasT.parent(canvasID);
 
@@ -214,7 +210,7 @@ function setup() {
     for(let i=0;i<board.size;i++){
         for(let k=0;k<board.size;k++){
             let tempnode = new Node(i, k, 0);
-            tempnode.drawRect(tempnode.nodeWeightColor(), 0, board.nodeWidth, board.nodeHeight);
+            tempnode.drawRect(tempnode.nodeWeightColor(), color(0), board.nodeWidth, board.nodeHeight);
             board.insertnode(i, k, tempnode);
         }
     }
@@ -242,13 +238,13 @@ function draw() {
             }
         }
 
-        currentNode.drawRect(color(floor(frameCount/3%255),floor(frameCount/2%255), floor(frameCount/4%255)));
+        currentNode.drawRect(color(floor(frameCount/3%255),floor(frameCount/2%255), floor(frameCount/4%255)), color(0), currentNode.nodeWidth, currentNode.nodeHeight);
         delete opensetDict[currentNode.xyStr]; // delete from openset record
         opensetSize -= 1;
         closedsetDict[currentNode.xyStr] = {x: currentNode.x, y: currentNode.y}; // add to closedset record
 
         // generate relatives
-        currentNode.generateRelatives(board.gridarray, start);
+        currentNode.generateRelatives(board.gridarray, board.size);
 
         for(let i=0;i<currentNode.relatives.length;i++){
             let relative = currentNode.relatives[i];
@@ -292,7 +288,7 @@ function draw() {
                     }
                     newPath = true;
                     relative.g = tempG;
-                    relative.drawRect(color(54,176,189)); // draw itself since part of open set
+                    relative.drawRect(color(54,176,189), color(0), board.nodeWidth, board.nodeHeight); // draw itself since part of open set
                     opensetDict[relative.xyStr] = {x: relative.x, y: relative.y};
                     opensetSize += 1;
                 }
@@ -315,38 +311,7 @@ function draw() {
                 tempNode = tempNode.parentNode;
                 path.push(tempNode);
             }
-            // changes closed nodes colors
-            for(let closedXY in closedsetDict){
-                let closedX = closedsetDict[closedXY].x;
-                let closedY = closedsetDict[closedXY].y;
-                if(board.gridarray[closedX][closedY] === start || board.gridarray[closedX][closedY] === end){
-                    continue;
-                }
-                board.gridarray[closedX][closedY].drawRect(board.gridarray[closedX][closedY].nodeWeightColor());
-            }
         }
-    }
-    else if(goal){
-        // bounce colors back and forth
-        bounceColors += colorDir;
-        if(bounceColors >= 255){
-            colorDir = -1;
-            bounceColors = 255;
-        }
-        else if(0 >= bounceColors){
-            colorDir = 1;
-            bounceColors = 0;
-        }
-
-        // forward node with trailing path
-        var forwardPace = path.length - frameCount%path.length - 1;
-        path[forwardPace].drawRect(color(frameCount/2%255, frameCount/4%255, frameCount/8%255));
-
-        for(var i=0;i<forwardPace;i++){
-            path[i].drawRect(path[i].nodeWeightColor(), color(255));
-        }
-        start.drawRect(color(10, 204, 102));
-        end.drawRect(color(204, 10, 10));
     }
     else if(goal === null && start ){
         console.log("Not found");
@@ -361,18 +326,14 @@ function draw() {
 function windowResized() {
     // recalculate canvas size
     let canvasID = document.getElementById('canvasid');
-    board.resize(floor(canvasID.offsetWidth*.8), floor(windowHeight*0.8), board.size);
-    boxheight = board.height/board.size;
-    boxwidth = board.width/board.size;
-
-    // draw canvas
+    board.resize(canvasID.offsetWidth, windowHeight, board.size);
 
     // redraw canvas/grid
     resizeCanvas(board.width, board.height);
     for(var x=0;x<board.size;x++){
         for(var y=0;y<board.size;y++){
             var tempNode = board.gridarray[x][y];
-            tempNode.drawRect(tempNode.nodeWeightColor()); // draws color of blocked node, otherwise based on weight
+            tempNode.drawRect(tempNode.nodeWeightColor(), color(0), board.nodeWidth, board.nodeHeight); // draws color of blocked node, otherwise based on weight
         }
     }
     noLoop();
