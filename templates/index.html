@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Testing</title>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/libraries/p5.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/libraries/nodeP5.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ url_for('static', filename='js/sketch.js') }}"></script>
+</head>
+<body>
+ <button onclick="changeToStart()" type="button">Start</button>
+ <button onclick="changeToEnd()" type="button">End</button>
+ <button onclick="changeToObstacle()" type="button">Obstacle</button>
+ <button onclick="resetBoard()" type="button">Reset Board</button>
+ <button onclick="changeToLow()" type="button">New road</button>
+ <button onclick="changeToMid()" type="button">Old road</button>
+ <button onclick="changeToHigh()" type="button">Dirt</button>
+ <button onclick="generateBlocked()" type="button">Generate Obstacles</button>
+ <button onclick="changeToStartLoop()" type="button">Start Path Search</button>
+ <button onclick="noLoop()" type="button">Stop Path Search</button>
+
+</body>
+</html>
