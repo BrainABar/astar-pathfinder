@@ -277,8 +277,10 @@ function setup() {
     // calculate canvas dimensions
     let canvasID = document.getElementById('canvasid');
 
-    cwidth = floor(canvasID.offsetWidth*.8);
-    cheight = floor(windowHeight*.8);
+    // default 400x400 canvas with 20x20 grid
+    gridsize = 20;
+    cwidth = 400; //floor(canvasID.offsetWidth*.8);
+    cheight = 400; //floor(windowHeight*.8);
     boxheight = cheight/gridsize;
     boxwidth = cwidth/gridsize;
 
