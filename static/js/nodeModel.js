@@ -12,14 +12,10 @@ function Node(x, y, weight){
   this.blocked = false;
   this.xyStr = x + ',' + y; // reference name 'x,y'
 
-  this.drawRect = function (fillColor, strokeColor, nodeFill=false) {
-      stroke(strokeColor || fillColor); // strokeColor, default to fillColor if ommited
-      if(nodeFill){
-        fill(fillColor);
-      }
-      else{
-
-      }
+  this.drawRect = function (fillColor, strokeColor) {
+      strokeColor = strokeColor || fillColor; // fill color used stroke is null
+      stroke(strokeColor);
+      fill(fillColor);
       rect(this.x* boxwidth, this.y * boxheight, boxwidth, boxheight);
   };
 

@@ -28,17 +28,18 @@ function changeGridSize(){
         "will create 100(10*10) nodes");
 
     if (userInput){
-        grid = null; // point old grid to no null;
-        grid = [];
+        board.gridarray = null; // point old grid to no null;
+        board.gridarray = [];
         gridsize = userInput;
 
         // recreate nodes
-        for(var i=0;i<gridsize;i++){
+        /*for(var i=0;i<gridsize;i++){
             grid.push([]);
-        }
+        }*/
+        board.creategrid();
         for(var x=0;x<gridsize;x++){
             for(var y=0;y<gridsize;y++){
-                grid[x].push(new Node(x, y, 0));
+                board.gridarray[x][y](new Node(x, y, 0));
             }
         }
         windowResized();
@@ -215,11 +216,9 @@ function setup() {
     cheight = 400; //floor(windowHeight*.8);
     boxheight = cheight/gridsize;
     boxwidth = cwidth/gridsize;
-    board = new Grid(400, 400, 20);
-    console.log(board);
 
     // draw canvas
-    canvasT = createCanvas(board.width,board.height);
+    canvasT = createCanvas(cwidth,cheight);
     canvasT.parent(canvasID);
 
     // create default 2d array of x by x size
@@ -236,6 +235,18 @@ function setup() {
             grid[x][y].drawRect(grid[x][y].nodeWeightColor());
         }
     }
+
+    // initialize the board and insert nodes
+    board = new Grid(400, 400, 20);
+    board.creategrid();
+    // insert nodes into grid
+    for(let i=0;i<board.size;i++){
+        for(let k=0;k<board.size;k++){
+            board.insertnode(i, k, new Node(i, k, 0));
+        }
+    }
+
+    grid = board.gridarray;
 
     frameRate(60);
 }
@@ -254,10 +265,10 @@ function draw() {
             var openY = opensetDict[nodeXY].y;
 
             if(currentNode == null){
-                currentNode = grid[openX][openY];
+                currentNode = board.gridarray[openX][openY];
             }
-            if(grid[openX][openY].f < currentNode.f){
-                currentNode = grid[openX][openY];
+            if(board.gridarray[openX][openY].f < currentNode.f){
+                currentNode = board.gridarray[openX][openY];
             }
         }
 
@@ -267,7 +278,7 @@ function draw() {
         closedsetDict[currentNode.xyStr] = {x: currentNode.x, y: currentNode.y}; // add to closedset record
 
         // generate relatives
-        currentNode.generateRelatives(grid, start);
+        currentNode.generateRelatives(board.gridarray, start);
 
         for(let i=0;i<currentNode.relatives.length;i++){
             let relative = currentNode.relatives[i];
@@ -285,10 +296,10 @@ function draw() {
 
 
                 if(0 <= checkX && checkX < gridsize){
-                    checkNodeOne = grid[checkX][relative.y];
+                    checkNodeOne = board.gridarray[checkX][relative.y];
                 }
                 if(0 <= checkY && checkY < gridsize){
-                    checkNodeTwo = grid[relative.x][checkY];
+                    checkNodeTwo = board.gridarray[relative.x][checkY];
                 }
 
                 if(checkNodeOne !== null && checkNodeTwo !== null){
@@ -368,10 +379,10 @@ function draw() {
             for(let closedXY in closedsetDict){
                 let closedX = closedsetDict[closedXY].x;
                 let closedY = closedsetDict[closedXY].y;
-                if(grid[closedX][closedY] === start || grid[closedX][closedY] === end){
+                if(board.gridarray[closedX][closedY] === start || board.gridarray[closedX][closedY] === end){
                     continue;
                 }
-                grid[closedX][closedY].drawRect(grid[closedX][closedY].nodeWeightColor());
+                board.gridarray[closedX][closedY].drawRect(board.gridarray[closedX][closedY].nodeWeightColor());
             }
         }
     }
@@ -431,7 +442,7 @@ function windowResized() {
     resizeCanvas(cwidth, cheight);
     for(var x=0;x<gridsize;x++){
         for(var y=0;y<gridsize;y++){
-            var tempNode = grid[x][y];
+            var tempNode = board.gridarray[x][y];
             tempNode.drawRect(tempNode.nodeWeightColor()); // draws color of blocked node, otherwise based on weight
         }
     }
